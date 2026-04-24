@@ -27,11 +27,11 @@ body {
 
 .password-overlay {
   position: absolute;
-  left: 55%;
-  top: 42%;
+  left: 50%;
+  top: 40.6%;
   width: 19.55%;
   min-width: 300px;
-  background: #ffffff;
+  background: transparent;
   color: #40484d;
   font-size: clamp(10px, 0.58vw, 12px);
   font-weight: 400;
@@ -67,7 +67,7 @@ label {
   display: block;
   width: 100%;
   height: clamp(28px, 1.68vw, 34px);
-  padding: 4px 70px 4px 8px;
+  padding: 4px px 4px 8px;
   border: 1px solid #c7cdd1;
   border-radius: 0;
   background: #ffffff;
@@ -92,15 +92,30 @@ label {
   position: absolute;
   top: 1px;
   right: 1px;
+  width: 38px;
   height: calc(100% - 2px);
-  padding: 0 8px;
+  padding: 0;
   border: 0;
   border-left: 1px solid #d6dadd;
   background: #ffffff;
   color: #40484d;
-  font: inherit;
-  font-size: clamp(10px, 0.54vw, 11px);
   cursor: pointer;
+}
+
+.toggle-password::before {
+  content: "👁";
+  font-size: 15px;
+  line-height: 1;
+}
+
+.toggle-password.is-visible::before {
+  content: "⌣";
+}
+
+.toggle-password:hover,
+.toggle-password:focus-visible {
+  background: #f3f3f3;
+  outline: none;
 }
 
 .toggle-password:hover,
@@ -125,29 +140,61 @@ label {
 .rules {
   list-style: none;
   padding: 0;
+  margin: 5px 0 0;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2 Spalten */
+  grid-auto-flow: column;        /* Füllt zuerst die linke Spalte nach unten */
+  grid-template-rows: repeat(3, auto); /* genau 3 Zeilen */
+  column-gap: 16px;
 }
 
 .rules li {
-  margin: 0;
+  margin-bottom: 3px;
+  font-size: 11px;
 }
 
 .rules li::before {
-  content: "- ";
+content: "○ ";
+  color: #999999;
 }
 
 .rules li.is-met {
-  color: #40484d;
+  color: #229954;
 }
 
-.rules li:not(.is-met) {
-  color: #6d757a;
+.rules li.is-met::before {
+  content: "✓ ";
+  color: #229954;
+  font-weight: bold;
 }
 
 .repeat-feedback {
-  min-height: 1.45em;
-  margin-top: 4px;
+  min-height: 16px;
+  margin-top: 6px;
+  color: #666666;
+  font-size: 12px;
 }
 
+/* korrekt */
+.repeat-feedback.is-valid {
+  color: #229954;
+}
+
+.repeat-feedback.is-valid::before {
+  content: "✓ ";
+  font-weight: bold;
+}
+
+/* falsch */
+.repeat-feedback.is-invalid {
+  color: #c0392b;
+}
+
+.repeat-feedback.is-invalid::before {
+  content: "✕ ";
+  font-weight: bold;
+}
 @media (max-width: 900px) {
   .stage {
     width: 2048px;

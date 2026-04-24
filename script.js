@@ -2,6 +2,7 @@
   'use strict';
 
   var maxLength = 16;
+
   var password = document.getElementById('password');
   var repeat = document.getElementById('password-repeat');
   var counter = document.getElementById('password-counter');
@@ -23,7 +24,7 @@
       return /[A-ZÄÖÜ]/.test(value);
     },
     digit: function (value) {
-      return /\d/.test(value);
+      return /[0-9]/.test(value);
     },
     special: function (value) {
       return /[^A-Za-zÄÖÜäöüß0-9]/.test(value);
@@ -41,68 +42,85 @@
   }
 
   function countMet(status) {
-    return Object.keys(status).filter(function (key) {
-      return status[key];
-    }).length;
+    var count = 0;
+
+    Object.keys(status).forEach(function (key) {
+      if (status[key]) {
+        count += 1;
+      }
+    });
+
+    return count;
   }
 
   function updateRules(status) {
     Array.prototype.forEach.call(ruleItems, function (item) {
       var ruleName = item.getAttribute('data-rule');
-      item.classList.toggle('is-met', Boolean(status[ruleName]));
+      item.classList.toggle('is-met', status[ruleName] === true);
     });
   }
 
+  function updateStrength(score) {
+    var safeScore = Math.max(0, Math.min(5, score));
+    var percent = (safeScore / 5) * 100;
+
+    var labels = [
+      '–',
+      'Schwach',
+      'Schwach',
+      'Mittel',
+      'Gut',
+      'Sehr gut'
+    ];
+
+    strengthBar.style.width = percent + '%';
+    strengthBar.className = 'password-strength-bar strength-' + safeScore;
+    strengthText.textContent = 'Stärke: ' + labels[safeScore];
+  }
+
   function updateRepeatFeedback() {
-    if (!repeat.value) {
+    repeat.value = repeat.value.slice(0, maxLength);
+
+    if (repeat.value.length === 0) {
       repeatFeedback.textContent = '';
+      repeatFeedback.className = 'repeat-feedback';
       return;
     }
 
-    repeatFeedback.textContent = password.value === repeat.value
-      ? 'Passwörter stimmen überein.'
-      : 'Passwörter stimmen nicht überein.';
+    if (password.value === repeat.value) {
+      repeatFeedback.textContent = 'Passwörter stimmen überein.';
+      repeatFeedback.className = 'repeat-feedback is-valid';
+      return;
+    }
+
+    repeatFeedback.textContent = 'Passwörter stimmen nicht überein.';
+    repeatFeedback.className = 'repeat-feedback is-invalid';
   }
 
   function updatePasswordState() {
-    var value = password.value.slice(0, maxLength);
+    password.value = password.value.slice(0, maxLength);
 
-    if (password.value !== value) {
-      password.value = value;
-    }
-
-    var status = getStatus(value);
+    var status = getStatus(password.value);
     var fulfilled = countMet(status);
 
-    counter.textContent = value.length + ' / ' + maxLength + ' Zeichen';
+    counter.textContent = password.value.length + ' / ' + maxLength + ' Zeichen';
     summary.textContent = 'Erfüllt: ' + fulfilled + ' von 5 Kriterien';
 
     updateRules(status);
-    updateRepeatFeedback();
     updateStrength(fulfilled);
+    updateRepeatFeedback();
   }
- function updateStrength(score) {
-  var percent = (score / 5) * 100;
 
-  strengthBar.style.width = percent + '%';
-
-  strengthBar.className = 'password-strength-bar strength-' + score;
-
-  var labels = [
-    'Sehr schwach',
-    'Schwach',
-    'Mittel',
-    'Gut',
-    'Sehr gut'
-  ];
-
-  strengthText.textContent = 'Stärke: ' + (labels[score - 1] || '–');
-}
   function toggleInputVisibility(button) {
     var input = document.getElementById(button.getAttribute('data-target'));
+
+    if (!input) {
+      return;
+    }
+
     var isHidden = input.classList.toggle('masked');
 
-    button.textContent = isHidden ? 'Anzeigen' : 'Verbergen';
+    button.classList.toggle('is-visible', !isHidden);
     button.setAttribute(
       'aria-label',
       isHidden ? 'Passwort anzeigen' : 'Passwort verbergen'

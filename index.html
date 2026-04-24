@@ -22,7 +22,12 @@
             maxlength="16"
             aria-describedby="password-counter password-summary password-rules"
           >
-          <button class="toggle-password" type="button" data-target="password" aria-label="Passwort anzeigen">Anzeigen</button>
+         <button
+  class="toggle-password"
+  type="button"
+  data-target="password"
+  aria-label="Passwort anzeigen"
+></button>
         </div>
       </div>
       <div class="password-strength">
@@ -43,8 +48,12 @@
             maxlength="16"
             aria-describedby="repeat-feedback"
           >
-          <button class="toggle-password" type="button" data-target="password-repeat" aria-label="Wiederholtes Passwort anzeigen">Anzeigen</button>
-        </div>
+          <button
+  class="toggle-password"
+  type="button"
+  data-target="password-repeat"
+  aria-label="Passwort anzeigen"
+></button>
       </div>
 
       <p class="hint" id="password-counter">0 / 16 Zeichen</p>
@@ -55,7 +64,7 @@
         <li data-rule="lower">Kleinbuchstaben</li>
         <li data-rule="upper">Großbuchstaben</li>
         <li data-rule="digit">Ziffern</li>
-        <li data-rule="special">Sonderzeichen</li>
+        <li data-rule="special">Sonderzeichen(z. B. ! @ # $ %)</li>
       </ul>
 
       <p class="hint repeat-feedback" id="repeat-feedback" aria-live="polite"></p>
