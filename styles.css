@@ -27,8 +27,8 @@ body {
 
 .password-overlay {
   position: absolute;
-  left: 50.28%;
-  top: 42.1%;
+  left: 55%;
+  top: 42%;
   width: 19.55%;
   min-width: 300px;
   background: #ffffff;
@@ -159,3 +159,23 @@ label {
     overflow-x: hidden;
   }
 }
+.password-strength {
+  height: 4px;
+  background: #ddd;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  width: 100%;
+  position: relative;
+}
+
+.password-strength-bar {
+  height: 100%;
+  width: 0%;
+  background: #ccc;
+  transition: width 0.2s ease;
+}
+.strength-1 { background: #c0392b; } /* rot */
+.strength-2 { background: #e67e22; } /* orange */
+.strength-3 { background: #f1c40f; } /* gelb */
+.strength-4 { background: #27ae60; } /* grün */
+.strength-5 { background: #2ecc71; } /* kräftig grün */

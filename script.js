@@ -9,6 +9,8 @@
   var repeatFeedback = document.getElementById('repeat-feedback');
   var ruleItems = document.querySelectorAll('[data-rule]');
   var toggleButtons = document.querySelectorAll('.toggle-password');
+  var strengthBar = document.getElementById('strength-bar');
+  var strengthText = document.getElementById('strength-text');
 
   var checks = {
     length: function (value) {
@@ -77,8 +79,25 @@
 
     updateRules(status);
     updateRepeatFeedback();
+    updateStrength(fulfilled);
   }
+ function updateStrength(score) {
+  var percent = (score / 5) * 100;
 
+  strengthBar.style.width = percent + '%';
+
+  strengthBar.className = 'password-strength-bar strength-' + score;
+
+  var labels = [
+    'Sehr schwach',
+    'Schwach',
+    'Mittel',
+    'Gut',
+    'Sehr gut'
+  ];
+
+  strengthText.textContent = 'Stärke: ' + (labels[score - 1] || '–');
+}
   function toggleInputVisibility(button) {
     var input = document.getElementById(button.getAttribute('data-target'));
     var isHidden = input.classList.toggle('masked');
