@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Demo Registrierung</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="stage" aria-label="Demo einer Registrierungsseite">
+    <img class="background-page" src="registration-bg.png" alt="Registrierungsseite als visuelles Mockup">
+
+    <section class="password-overlay" aria-label="Passwortbereich">
+      <div class="form-row password-row">
+        <label for="password">Passwort *</label>
+        <div class="password-input-wrap">
+          <input
+            id="password"
+            class="password-input masked"
+            type="text"
+            autocomplete="new-password"
+            maxlength="16"
+            aria-describedby="password-counter password-summary password-rules"
+          >
+          <button class="toggle-password" type="button" data-target="password" aria-label="Passwort anzeigen">Anzeigen</button>
+        </div>
+      </div>
+
+      <div class="form-row repeat-row">
+        <label for="password-repeat">Passwort wiederholen *</label>
+        <div class="password-input-wrap">
+          <input
+            id="password-repeat"
+            class="password-input masked"
+            type="text"
+            autocomplete="new-password"
+            maxlength="16"
+            aria-describedby="repeat-feedback"
+          >
+          <button class="toggle-password" type="button" data-target="password-repeat" aria-label="Wiederholtes Passwort anzeigen">Anzeigen</button>
+        </div>
+      </div>
+
+      <p class="hint" id="password-counter">0 / 16 Zeichen</p>
+      <p class="hint" id="password-summary">Erfüllt: 0 von 5 Kriterien</p>
+
+      <ul class="rules" id="password-rules">
+        <li data-rule="length">Länge 8–16 Zeichen</li>
+        <li data-rule="lower">Kleinbuchstaben</li>
+        <li data-rule="upper">Großbuchstaben</li>
+        <li data-rule="digit">Ziffern</li>
+        <li data-rule="special">Sonderzeichen</li>
+      </ul>
+
+      <p class="hint repeat-feedback" id="repeat-feedback" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
