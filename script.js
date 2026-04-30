@@ -1,140 +1,183 @@
 (function () {
   'use strict';
 
-  var maxLength = 16;
+  var MAX_PASSWORD_LENGTH = 16;
+  var MIN_PASSWORD_LENGTH = 8;
 
-  var password = document.getElementById('password');
-  var repeat = document.getElementById('password-repeat');
-  var counter = document.getElementById('password-counter');
-  var summary = document.getElementById('password-summary');
-  var repeatFeedback = document.getElementById('repeat-feedback');
-  var ruleItems = document.querySelectorAll('[data-rule]');
-  var toggleButtons = document.querySelectorAll('.toggle-password');
-  var strengthBar = document.getElementById('strength-bar');
-  var strengthText = document.getElementById('strength-text');
+  var strengthLabels = [
+    '–',
+    'Schwach',
+    'Schwach',
+    'Mittel',
+    'Gut',
+    'Sehr gut'
+  ];
 
-  var checks = {
-    length: function (value) {
-      return value.length >= 8 && value.length <= maxLength;
+  var elements = {
+    password: document.getElementById('password'),
+    repeatedPassword: document.getElementById('password-repeat'),
+    counter: document.getElementById('password-counter'),
+    summary: document.getElementById('password-summary'),
+    repeatFeedback: document.getElementById('repeat-feedback'),
+    strengthBar: document.getElementById('strength-bar'),
+    strengthText: document.getElementById('strength-text'),
+    rules: document.querySelectorAll('[data-rule]'),
+    toggleButtons: document.querySelectorAll('.password-toggle')
+  };
+
+  var rules = {
+    length: function (password) {
+      return password.length >= MIN_PASSWORD_LENGTH &&
+        password.length <= MAX_PASSWORD_LENGTH;
     },
-    lower: function (value) {
-      return /[a-zäöüß]/.test(value);
+    lower: function (password) {
+      return /[a-zäöüß]/.test(password);
     },
-    upper: function (value) {
-      return /[A-ZÄÖÜ]/.test(value);
+    upper: function (password) {
+      return /[A-ZÄÖÜ]/.test(password);
     },
-    digit: function (value) {
-      return /[0-9]/.test(value);
+    digit: function (password) {
+      return /[0-9]/.test(password);
     },
-    special: function (value) {
-      return /[^A-Za-zÄÖÜäöüß0-9]/.test(value);
+    special: function (password) {
+      return /[^A-Za-zÄÖÜäöüß0-9]/.test(password);
     }
   };
 
-  function getStatus(value) {
+  function initialize() {
+    if (!hasRequiredElements()) {
+      return;
+    }
+
+    elements.password.addEventListener('input', updatePasswordState);
+    elements.repeatedPassword.addEventListener('input', updateRepeatFeedback);
+
+    Array.prototype.forEach.call(elements.toggleButtons, function (button) {
+      button.addEventListener('click', function () {
+        togglePasswordVisibility(button);
+      });
+    });
+
+    updatePasswordState();
+  }
+
+  function hasRequiredElements() {
+    return elements.password &&
+      elements.repeatedPassword &&
+      elements.counter &&
+      elements.summary &&
+      elements.repeatFeedback &&
+      elements.strengthBar &&
+      elements.strengthText;
+  }
+
+  function updatePasswordState() {
+    limitInputLength(elements.password);
+
+    var password = elements.password.value;
+    var validation = validatePassword(password);
+    var fulfilledRules = countFulfilledRules(validation);
+
+    updateCounter(password);
+    updateSummary(fulfilledRules);
+    updateRules(validation);
+    updateStrength(fulfilledRules);
+    updateRepeatFeedback();
+  }
+
+  function updateRepeatFeedback() {
+    limitInputLength(elements.repeatedPassword);
+
+    if (elements.repeatedPassword.value.length === 0) {
+      setRepeatFeedback('', '');
+      return;
+    }
+
+    if (passwordsMatch()) {
+      setRepeatFeedback('Passwörter stimmen überein.', 'is-valid');
+      return;
+    }
+
+    setRepeatFeedback('Passwörter stimmen nicht überein.', 'is-invalid');
+  }
+
+  function validatePassword(password) {
     return {
-      length: checks.length(value),
-      lower: checks.lower(value),
-      upper: checks.upper(value),
-      digit: checks.digit(value),
-      special: checks.special(value)
+      length: rules.length(password),
+      lower: rules.lower(password),
+      upper: rules.upper(password),
+      digit: rules.digit(password),
+      special: rules.special(password)
     };
   }
 
-  function countMet(status) {
-    var count = 0;
-
-    Object.keys(status).forEach(function (key) {
-      if (status[key]) {
-        count += 1;
-      }
-    });
-
-    return count;
+  function countFulfilledRules(validation) {
+    return Object.keys(validation).filter(function (ruleName) {
+      return validation[ruleName];
+    }).length;
   }
 
-  function updateRules(status) {
-    Array.prototype.forEach.call(ruleItems, function (item) {
-      var ruleName = item.getAttribute('data-rule');
-      item.classList.toggle('is-met', status[ruleName] === true);
+  function updateCounter(password) {
+    elements.counter.textContent =
+      password.length + ' / ' + MAX_PASSWORD_LENGTH + ' Zeichen';
+  }
+
+  function updateSummary(fulfilledRules) {
+    elements.summary.textContent =
+      'Erfüllt: ' + fulfilledRules + ' von 5 Kriterien';
+  }
+
+  function updateRules(validation) {
+    Array.prototype.forEach.call(elements.rules, function (ruleElement) {
+      var ruleName = ruleElement.getAttribute('data-rule');
+      ruleElement.classList.toggle('is-met', validation[ruleName] === true);
     });
   }
 
   function updateStrength(score) {
-    var safeScore = Math.max(0, Math.min(5, score));
-    var percent = (safeScore / 5) * 100;
+    var safeScore = clamp(score, 0, 5);
+    var width = safeScore * 20;
 
-    var labels = [
-      '–',
-      'Schwach',
-      'Schwach',
-      'Mittel',
-      'Gut',
-      'Sehr gut'
-    ];
-
-    strengthBar.style.width = percent + '%';
-    strengthBar.className = 'password-strength-bar strength-' + safeScore;
-    strengthText.textContent = 'Stärke: ' + labels[safeScore];
+    elements.strengthBar.style.width = width + '%';
+    elements.strengthBar.className =
+      'password-strength-bar strength-' + safeScore;
+    elements.strengthText.textContent =
+      'Stärke: ' + strengthLabels[safeScore];
   }
 
-  function updateRepeatFeedback() {
-    repeat.value = repeat.value.slice(0, maxLength);
-
-    if (repeat.value.length === 0) {
-      repeatFeedback.textContent = '';
-      repeatFeedback.className = 'repeat-feedback';
-      return;
-    }
-
-    if (password.value === repeat.value) {
-      repeatFeedback.textContent = 'Passwörter stimmen überein.';
-      repeatFeedback.className = 'repeat-feedback is-valid';
-      return;
-    }
-
-    repeatFeedback.textContent = 'Passwörter stimmen nicht überein.';
-    repeatFeedback.className = 'repeat-feedback is-invalid';
+  function setRepeatFeedback(message, stateClass) {
+    elements.repeatFeedback.textContent = message;
+    elements.repeatFeedback.className =
+      stateClass ? 'repeat-feedback ' + stateClass : 'repeat-feedback';
   }
 
-  function updatePasswordState() {
-    password.value = password.value.slice(0, maxLength);
-
-    var status = getStatus(password.value);
-    var fulfilled = countMet(status);
-
-    counter.textContent = password.value.length + ' / ' + maxLength + ' Zeichen';
-    summary.textContent = 'Erfüllt: ' + fulfilled + ' von 5 Kriterien';
-
-    updateRules(status);
-    updateStrength(fulfilled);
-    updateRepeatFeedback();
+  function passwordsMatch() {
+    return elements.password.value === elements.repeatedPassword.value;
   }
 
-  function toggleInputVisibility(button) {
+  function togglePasswordVisibility(button) {
     var input = document.getElementById(button.getAttribute('data-target'));
 
     if (!input) {
       return;
     }
 
-    var isHidden = input.classList.toggle('masked');
+    var isNowHidden = input.classList.toggle('is-masked');
 
-    button.classList.toggle('is-visible', !isHidden);
+    button.classList.toggle('is-visible', !isNowHidden);
     button.setAttribute(
       'aria-label',
-      isHidden ? 'Passwort anzeigen' : 'Passwort verbergen'
+      isNowHidden ? 'Passwort anzeigen' : 'Passwort verbergen'
     );
   }
 
-  password.addEventListener('input', updatePasswordState);
-  repeat.addEventListener('input', updateRepeatFeedback);
+  function limitInputLength(input) {
+    input.value = input.value.slice(0, MAX_PASSWORD_LENGTH);
+  }
 
-  Array.prototype.forEach.call(toggleButtons, function (button) {
-    button.addEventListener('click', function () {
-      toggleInputVisibility(button);
-    });
-  });
+  function clamp(value, minimum, maximum) {
+    return Math.min(Math.max(value, minimum), maximum);
+  }
 
-  updatePasswordState();
+  initialize();
 }());

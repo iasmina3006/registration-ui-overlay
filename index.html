@@ -6,68 +6,78 @@
   <title>Demo Registrierung</title>
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
   <main class="stage" aria-label="Demo einer Registrierungsseite">
-    <img class="background-page" src="registration-bg.png" alt="Registrierungsseite als visuelles Mockup">
+    <img
+      class="background-page"
+      src="registration-bg.png"
+      alt="Registrierungsseite als visuelles Mockup"
+    >
 
     <section class="password-overlay" aria-label="Passwortbereich">
-      <div class="form-row password-row">
+      <div class="form-row">
         <label for="password">Passwort *</label>
-        <div class="password-input-wrap">
+
+        <div class="password-field">
           <input
             id="password"
-            class="password-input masked"
+            class="password-input is-masked"
             type="text"
-            autocomplete="new-password"
             maxlength="16"
+            autocomplete="new-password"
             aria-describedby="password-counter password-summary password-rules"
           >
-         <button
-  class="toggle-password"
-  type="button"
-  data-target="password"
-  aria-label="Passwort anzeigen"
-></button>
+
+          <button
+            class="password-toggle"
+            type="button"
+            data-target="password"
+            aria-label="Passwort anzeigen"
+          ></button>
         </div>
       </div>
-      <div class="password-strength">
-  <div id="strength-bar" class="password-strength-bar"></div>
-</div>
 
-<div id="strength-text" style="font-size:12px; color:#666;">
-  Stärke: –
-</div>
-      <div class="form-row repeat-row">
-        <label for="password-repeat">Passwort wiederholen *</label>
-        <div class="password-input-wrap">
-          <input
-            id="password-repeat"
-            class="password-input masked"
-            type="text"
-            autocomplete="new-password"
-            maxlength="16"
-            aria-describedby="repeat-feedback"
-          >
-          <button
-  class="toggle-password"
-  type="button"
-  data-target="password-repeat"
-  aria-label="Passwort anzeigen"
-></button>
+      <div class="password-strength" aria-hidden="true">
+        <div id="strength-bar" class="password-strength-bar"></div>
       </div>
 
-      <p class="hint" id="password-counter">0 / 16 Zeichen</p>
-      <p class="hint" id="password-summary">Erfüllt: 0 von 5 Kriterien</p>
+      <p id="strength-text" class="hint">Stärke: –</p>
 
-      <ul class="rules" id="password-rules">
+      <div class="form-row">
+        <label for="password-repeat">Passwort wiederholen *</label>
+
+        <div class="password-field">
+          <input
+            id="password-repeat"
+            class="password-input is-masked"
+            type="text"
+            maxlength="16"
+            autocomplete="new-password"
+            aria-describedby="repeat-feedback"
+          >
+
+          <button
+            class="password-toggle"
+            type="button"
+            data-target="password-repeat"
+            aria-label="Passwort anzeigen"
+          ></button>
+        </div>
+      </div>
+
+      <p id="password-counter" class="hint">0 / 16 Zeichen</p>
+      <p id="password-summary" class="hint">Erfüllt: 0 von 5 Kriterien</p>
+
+      <ul id="password-rules" class="password-rules">
         <li data-rule="length">Länge 8–16 Zeichen</li>
         <li data-rule="lower">Kleinbuchstaben</li>
         <li data-rule="upper">Großbuchstaben</li>
         <li data-rule="digit">Ziffern</li>
-        <li data-rule="special">Sonderzeichen(z. B. ! @ # $ %)</li>
+        <li data-rule="special">Sonderzeichen (z. B. ! @ # $ %)</li>
       </ul>
 
-      <p class="hint repeat-feedback" id="repeat-feedback" aria-live="polite"></p>
+      <p id="repeat-feedback" class="repeat-feedback" aria-live="polite"></p>
     </section>
   </main>
 

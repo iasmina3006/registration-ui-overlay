@@ -2,13 +2,27 @@
   box-sizing: border-box;
 }
 
+:root {
+  --page-background: #d7dbdd;
+  --text-color: #40484d;
+  --muted-text-color: #4f5960;
+  --input-border: #c7cdd1;
+  --input-border-focus: #aab1b6;
+  --button-border: #d6dadd;
+  --success-color: #229954;
+  --error-color: #c0392b;
+  --warning-color: #e67e22;
+  --medium-color: #f1c40f;
+}
+
 html,
 body {
   margin: 0;
   min-height: 100%;
-  background: #d7dbdd;
-  font-family: Arial, Helvetica, sans-serif;
-  color: #40484d;
+  background: var(--page-background);
+  color: var(--text-color);
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 13px;
 }
 
 .stage {
@@ -27,38 +41,33 @@ body {
 
 .password-overlay {
   position: absolute;
-  left: 50%;
   top: 40.6%;
+  left: 50%;
+  z-index: 2;
   width: 19.55%;
   min-width: 300px;
   background: transparent;
-  color: #40484d;
+  color: var(--text-color);
   font-size: clamp(10px, 0.58vw, 12px);
-  font-weight: 400;
-  z-index: 2;
 }
 
 .form-row {
-  margin: 0 0 18px;
+  margin-bottom: 18px;
 }
 
-.password-row {
-  margin-bottom: 19px;
-}
-
-.repeat-row {
-  margin-bottom: 13px;
+.form-row:first-child {
+  margin-bottom: 6px;
 }
 
 label {
   display: block;
-  margin: 0 0 7px;
-  font-size: clamp(10px, 0.58vw, 12px);
-  font-weight: 700;
-  color: #40484d;
+  margin-bottom: 7px;
+  color: #3f4a50;
+  font-size: 12px;
+  font-weight: 600;
 }
 
-.password-input-wrap {
+.password-field {
   position: relative;
   width: 100%;
 }
@@ -67,76 +76,95 @@ label {
   display: block;
   width: 100%;
   height: clamp(28px, 1.68vw, 34px);
-  padding: 4px px 4px 8px;
-  border: 1px solid #c7cdd1;
+  padding: 4px 44px 4px 8px;
+  border: 1px solid var(--input-border);
   border-radius: 0;
+  outline: none;
   background: #ffffff;
-  color: #40484d;
+  color: #333333;
   font: inherit;
   line-height: normal;
-  outline: none;
-  box-shadow: none;
   appearance: none;
+  box-shadow: none;
 }
 
 .password-input:focus {
-  border-color: #aab1b6;
+  border-color: var(--input-border-focus);
 }
 
-.password-input.masked {
+.password-input.is-masked {
   -webkit-text-security: disc;
   text-security: disc;
 }
 
-.toggle-password {
+.password-toggle {
   position: absolute;
   top: 1px;
   right: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 38px;
   height: calc(100% - 2px);
-  display: flex;           
-  align-items: center;        
-  justify-content: center;  
   padding: 0;
   border: 0;
-  border-left: 1px solid #d6dadd;
+  border-left: 1px solid var(--button-border);
   background: #ffffff;
-  color: #40484d;
   cursor: pointer;
 }
 
-.toggle-password::before {
-   content: "";
-   display: block;
-   width: 16px;
-   height: 16px;
-   background: url("view.png") center / contain no-repeat;
+.password-toggle::before {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  background: url("view.png") center / contain no-repeat;
 }
 
-.toggle-password.is-visible::before {
-   content: "";
-   display: block;
-   width: 16px;
-   height: 16px;
-   background: url("hide.png") center / contain no-repeat;
+.password-toggle.is-visible::before {
+  background-image: url("hide.png");
 }
 
-.toggle-password:hover,
-.toggle-password:focus-visible {
+.password-toggle:hover,
+.password-toggle:focus-visible {
   background: #f3f3f3;
   outline: none;
 }
 
-.toggle-password:hover,
-.toggle-password:focus-visible {
-  text-decoration: underline;
-  outline: none;
+.password-strength {
+  width: 100%;
+  height: 4px;
+  margin: 6px 0;
+  background: #dddddd;
 }
 
-.hint,
-.rules {
+.password-strength-bar {
+  width: 0%;
+  height: 100%;
+  background: #cccccc;
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.password-strength-bar.strength-1 {
+  background: var(--error-color);
+}
+
+.password-strength-bar.strength-2 {
+  background: var(--warning-color);
+}
+
+.password-strength-bar.strength-3 {
+  background: var(--medium-color);
+}
+
+.password-strength-bar.strength-4,
+.password-strength-bar.strength-5 {
+  background: var(--success-color);
+}
+
+.hint {
   margin: 0;
-  color: #4f5960;
+  color: var(--muted-text-color);
   font-size: clamp(10px, 0.58vw, 12px);
   line-height: 1.45;
 }
@@ -146,92 +174,77 @@ label {
   margin-bottom: 2px;
 }
 
-.rules {
-  list-style: none;
-  padding: 0;
-  margin: 5px 0 0;
-
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* 2 Spalten */
-  grid-auto-flow: column;        /* Füllt zuerst die linke Spalte nach unten */
-  grid-template-rows: repeat(3, auto); /* genau 3 Zeilen */
-  column-gap: 16px;
-}
-
-.rules li {
-  margin-bottom: 3px;
+#strength-text {
+  color: #5f6b72;
   font-size: 11px;
 }
 
-.rules li::before {
-content: "○ ";
+.password-rules {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(3, auto);
+  column-gap: 16px;
+  margin: 5px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.password-rules li {
+  margin-bottom: 3px;
+  color: #666666;
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.password-rules li::before {
+  content: "○ ";
   color: #999999;
 }
 
-.rules li.is-met {
-  color: #229954;
+.password-rules li.is-met {
+  color: var(--success-color);
 }
 
-.rules li.is-met::before {
+.password-rules li.is-met::before {
   content: "✓ ";
-  color: #229954;
-  font-weight: bold;
+  color: var(--success-color);
+  font-weight: 700;
 }
 
 .repeat-feedback {
   min-height: 16px;
-  margin-top: 6px;
-  color: #666666;
-  font-size: 12px;
+  margin: 2px 0 0;
+  color: #5f6b72;
+  font-size: 11px;
 }
 
-/* korrekt */
 .repeat-feedback.is-valid {
-  color: #229954;
+  color: var(--success-color);
 }
 
 .repeat-feedback.is-valid::before {
   content: "✓ ";
-  font-weight: bold;
+  font-weight: 700;
 }
 
-/* falsch */
 .repeat-feedback.is-invalid {
-  color: #c0392b;
+  color: var(--error-color);
 }
 
 .repeat-feedback.is-invalid::before {
   content: "✕ ";
-  font-weight: bold;
+  font-weight: 700;
 }
+
 @media (max-width: 900px) {
+  body {
+    overflow-x: hidden;
+  }
+
   .stage {
     width: 2048px;
     transform: scale(calc(100vw / 2048));
     transform-origin: top left;
   }
-
-  body {
-    overflow-x: hidden;
-  }
 }
-.password-strength {
-  height: 4px;
-  background: #ddd;
-  margin-top: 6px;
-  margin-bottom: 6px;
-  width: 100%;
-  position: relative;
-}
-
-.password-strength-bar {
-  height: 100%;
-  width: 0%;
-  background: #ccc;
-  transition: width 0.2s ease;
-}
-.strength-1 { background: #c0392b; } /* rot */
-.strength-2 { background: #e67e22; } /* orange */
-.strength-3 { background: #f1c40f; } /* gelb */
-.strength-4 { background: #27ae60; } /* grün */
-.strength-5 { background: #2ecc71; } /* kräftig grün */
